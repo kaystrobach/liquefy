@@ -71,14 +71,20 @@ class RenderCommand extends Command
 
     protected function watchForChangesAndExecute(RenderService $renderService, InputInterface $input, OutputInterface $output)
     {
-        $files = new Illuminate\Filesystem\Filesystem;
-        $tracker = new JasonLewis\ResourceWatcher\Tracker;
-        $watcher = new JasonLewis\ResourceWatcher\Watcher($tracker, $files);
+        $files = new \Illuminate\Filesystem\Filesystem;
+        $tracker = new \JasonLewis\ResourceWatcher\Tracker;
+        $watcher = new \JasonLewis\ResourceWatcher\Watcher($tracker, $files);
 
-        $listener = $watcher->watch(BASE_DIRECTORY);
+        $listener = $watcher->watch(BASE_DIRECTORY . '/../Resources/Private/');
 
+        echo BASE_DIRECTORY . PHP_EOL;
+        
         $listener->modify(function($resource, $path) {
-            echo "{$path} has been modified.".PHP_EOL;
+            echo PHP_EOL;
+            echo $path . ' has been modified.'.PHP_EOL;
+            passthru('vendor/bin/liquefy');
+
         });
+        $watcher->start();
     }
 }
