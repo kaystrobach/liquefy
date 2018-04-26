@@ -1,0 +1,83 @@
+#!/usr/bin/env php
+<?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$controllerActions = [
+    'Authentication/Index',
+    'Application/Index'
+];
+
+function getView($controller = 'Default', $variables = []) {
+    $view = new \TYPO3Fluid\Fluid\View\TemplateView();
+    $paths = $view->getTemplatePaths();
+    $paths->setTemplateRootPaths(
+        [
+            __DIR__ . '/../Resources/Private/Templates/'
+        ]
+    );
+    $paths->setLayoutRootPaths(
+        [
+            __DIR__ . '/../Resources/Private/Layouts/'
+        ]
+    );
+    $paths->setPartialRootPaths(
+        [
+            __DIR__ . '/../Resources/Private/Partials/'
+        ]
+    );
+    $view->getRenderingContext()->setControllerName($controller);
+    $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
+            'f',
+            'Sbs\\SchulloginLayout\\ViewHelpers'
+    );
+    $view->assignMultiple($variables);
+    return $view;
+}
+
+if (!is_dir(__DIR__ . '/../Web')) {
+    if (!mkdir(__DIR__ . '/../Web') && !is_dir(__DIR__ . '/../Web')) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', __DIR__ . '/../Web'));
+    }
+}
+
+foreach ($controllerActions as $controllerAndAction) {
+    list($controller, $action) = explode('/', $controllerAndAction);
+    $outputFileName = __DIR__ . '/../Web/' . $controller . '_' . $action. '.html';
+    $jsonFileName = __DIR__ . '/../Resources/Private/Templates/' . $controllerAndAction . '.json';
+    $variables = [];
+    if (file_exists($jsonFileName)) {
+        $variables = json_decode(file_get_contents($jsonFileName), true);
+    }
+    $view = getView($controller, $variables);
+    echo 'write ' . $outputFileName . PHP_EOL;
+    file_put_contents($outputFileName  , $view->render($action));
+}
+
+
+
+$htmlBuffer = '<html>';
+$htmlBuffer .= '<body><ul></ul>';
+foreach ($controllerActions as $controllerAndAction) {
+    list($controller, $action) = explode('/', $controllerAndAction);
+    $htmlBuffer .= '<li><a href="' . $controller . '_' . $action . '.html">' . $controllerAndAction . '</a></li>';
+}
+$htmlBuffer .= '</ul></body>';
+$htmlBuffer .= '</html>';
+
+file_put_contents(
+    __DIR__ . '/../Web/index.html',
+    $htmlBuffer
+);
+
+exec('rm -rf ' . __DIR__ . '/../Web/Resources');
+exec ('mkdir -p ' . __DIR__ . '/../Web/Resources');
+
+if ((bool)getenv('SYMLINK')) {
+    exec ('ln -s ' . __DIR__ . '/../Resources/Public ' .  __DIR__ . '/../Web/Resources');
+} else {
+    exec ('cp -R ' . __DIR__ . '/../Resources/Public ' .  __DIR__ . '/../Web/Resources');
+}

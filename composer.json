@@ -1,0 +1,22 @@
+{
+  "name": "kaystrobach/liquefy",
+  "type": "library",
+  "bin": [
+    "liquefy"
+  ],
+  "require": {
+    "typo3fluid/fluid": "^2.4"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kay Strobach",
+      "email": "info@kay-strobach.de"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "KayStrobach\\Liquefy\\": "src/"
+    }
+  }
+}
