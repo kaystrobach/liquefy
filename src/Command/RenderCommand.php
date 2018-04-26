@@ -1,53 +1,78 @@
 <?php
-/**
- * Created by kay.
- */
+namespace KayStrobach\Liquefy\Command;
 
-namespace KayStrobach\Liquefy\Controller;
+use Lurker\Event\FilesystemEvent;
+use Lurker\ResourceWatcher;
+use KayStrobach\Liquefy\Service\RenderService;
+use KayStrobach\Liquefy\Service\ViewService;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command;
 
-
-use Sbs\SchulloginLayout\Domain\Model\Action;
-use Sbs\SchulloginLayout\Service\ViewService;
-use Symfony\Component\Finder\Finder;
-
-
-class RenderController
+class RenderCommand extends Command
 {
     /**
-     * @var ViewService
+     * @var OutputInterface
      */
-    private $viewService;
+    private $output;
 
-    public function __construct(ViewService $service)
+    /**
+     * RenderCommand constructor.
+     * @param string $name
+     * @throws \Symfony\Component\Console\Exception\LogicException
+     */
+    public function __construct($name = null)
     {
-        $this->viewService = $service;
+        parent::__construct($name);
     }
 
-    public function renderAction($controllerActions)
+    protected function configure()
     {
-        foreach ($controllerActions as $controllerAndAction) {
-            list($controller, $action) = explode('/', $controllerAndAction);
-            $outputFileName = BASE_DIRECTORY . '/../Web/' . $controller . '_' . $action. '.html';
-            $jsonFileName = BASE_DIRECTORY . '/../Resources/Private/Templates/' . $controllerAndAction . '.json';
-            $variables = [];
-            if (file_exists($jsonFileName)) {
-                $variables = json_decode(file_get_contents($jsonFileName), true);
-            }
-            $view = $this->viewService->getView($controller, $variables);
-            file_put_contents($outputFileName  , $view->render($action));
-            echo 'Rendering: ' . realpath($outputFileName) . PHP_EOL;
-        }
+        $this
+            ->setName('render:all')
+            ->setDescription('render fluid templates')
+            ->addOption('watch', 'w', InputOption::VALUE_NONE, 'Should we watch file changes?')
+        ;
     }
 
-    protected function getControllersAndActions()
+    /**
+     * Executes the current command.
+     *
+     * This method is not abstract because you can use this class
+     * as a concrete class. In this case, instead of defining the
+     * execute() method, you set the code to execute by passing
+     * a Closure to the setCode() method.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return null|int null or 0 if everything went fine, or an error code
+     *
+     * @see setCode()
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $controllersAndActions = [];
-        $finder = new Finder();
-        $files = $finder->files()->in(BASE_DIRECTORY . '/../Resources/Private/Templates')->notName('*.json')->getIterator();
-        /** @var \SplFileInfo $file */
-        foreach ($files as $file) {
-            $controllersAndActions[] = new Action($file);
+        $this->output = $output;
+
+        $renderService = new RenderService();
+        $renderService->setBaseDirectory(BASE_DIRECTORY);
+
+        if ($input->getOption('watch')) {
+            $this->watchForChangesAndExecute($renderService, $input, $output);
+        } else {
+            $this->executeOneTime($renderService, $input, $output);
         }
-        return $controllersAndActions;
+
+        return 0;
+    }
+
+    protected function executeOneTime(RenderService $renderService, InputInterface $input, OutputInterface $output)
+    {
+        $renderService->render($input, $output);
+    }
+
+    protected function watchForChangesAndExecute(RenderService $renderService, InputInterface $input, OutputInterface $output)
+    {
+        $output->writeln('Not supported yet');
     }
 }

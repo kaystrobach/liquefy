@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>
+
+        </title>
+    </head>
+    <body>
+        <ul>
+            <f:for each="{files}" as="file">
+                <li>
+                    <a href="{file.output.filename}">{file.controller} / {file.action}</a>
+                </li>
+            </f:for>
+        </ul>
+    </body>
+</html>
