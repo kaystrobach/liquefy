@@ -27,7 +27,7 @@ class ViewService
         $view->getRenderingContext()->setControllerName($controller);
         $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
             'f',
-            'Sbs\\SchulloginLayout\\ViewHelpers'
+            'KayStrobach\\Liquefy\\ViewHelpers'
         );
         $view->assignMultiple($variables);
         return $view;

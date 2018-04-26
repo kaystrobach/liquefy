@@ -116,7 +116,7 @@ class RenderService
         }
 
         $view = $this->viewService->getViewFromFile(
-            BASE_DIRECTORY . '/../Classes/Index.html',
+            __DIR__ . '/../../Resources/Private/Templates/Overview/Index.html',
             $variables
         );
 

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . '/../../autoload.php';
 
-define('BASE_DIRECTORY', realpath(__DIR__));
+define('BASE_DIRECTORY', realpath(dirname(dirname(__DIR__))));
 
 $application = new \Symfony\Component\Console\Application();
 $application->setCommandLoader(
