@@ -1,8 +1,6 @@
 <?php
 namespace KayStrobach\Liquefy\Command;
 
-use Lurker\Event\FilesystemEvent;
-use Lurker\ResourceWatcher;
 use KayStrobach\Liquefy\Service\RenderService;
 use KayStrobach\Liquefy\Service\ViewService;
 use Symfony\Component\Console\Input\InputInterface;
@@ -73,6 +71,14 @@ class RenderCommand extends Command
 
     protected function watchForChangesAndExecute(RenderService $renderService, InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Not supported yet');
+        $files = new Illuminate\Filesystem\Filesystem;
+        $tracker = new JasonLewis\ResourceWatcher\Tracker;
+        $watcher = new JasonLewis\ResourceWatcher\Watcher($tracker, $files);
+
+        $listener = $watcher->watch(BASE_DIRECTORY);
+
+        $listener->modify(function($resource, $path) {
+            echo "{$path} has been modified.".PHP_EOL;
+        });
     }
 }
