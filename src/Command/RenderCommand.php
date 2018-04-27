@@ -75,14 +75,18 @@ class RenderCommand extends Command
         $tracker = new \JasonLewis\ResourceWatcher\Tracker;
         $watcher = new \JasonLewis\ResourceWatcher\Watcher($tracker, $files);
 
-        $listener = $watcher->watch(BASE_DIRECTORY . '/../Resources/Private/');
+        $watchDirectory = BASE_DIRECTORY . '/../Resources/Private/';
+        $listener = $watcher->watch($watchDirectory);
 
-        echo BASE_DIRECTORY . PHP_EOL;
-        
-        $listener->modify(function($resource, $path) {
-            echo PHP_EOL;
-            echo $path . ' has been modified.'.PHP_EOL;
-            passthru('vendor/bin/liquefy');
+        $output->writeln('<info>Now watching</info>:');
+        $output->writeln(' ... ' . $watchDirectory);
+        $output->writeln('----------');
+
+        $listener->modify(function($resource, $path) use ($renderService, $input, $output) {
+            $output->writeln('<info>Changed</info>:');
+            $output->writeln(' ... ' . $path);
+            $renderService->render($input, $output);
+            $output->writeln('----------');
 
         });
         $watcher->start();

@@ -69,11 +69,28 @@ class RenderService
         exec ('mkdir -p ' . $this->baseDirectory . '/../Web/Resources');
     }
 
+    protected function getControllerAndActions()
+    {
+        $controllersAndActions = [];
+        $finder = new Finder();
+        $files = $finder->files()->in($this->baseDirectory. '/Resources/Private/Templates')->name('*.html');
+        /** @var \SplFileInfo $file */
+        foreach($finder as $file) {
+            $controllersAndActions[] = [
+                'controller' => basename($file->getPathname()),
+                'action' => $file->getBasename('.html')
+            ];
+            // add reading json and yaml file
+        }
+        return $controllersAndActions;
+    }
+
     /**
      * @param array $controllerActions
      */
     protected function renderTemplates($controllerActions)
     {
+        $this->output->writeln('<info>Rendering:</info>');
         foreach ($controllerActions as $controllerAndAction) {
             list($controller, $action) = explode('/', $controllerAndAction);
             $outputFileName = $this->baseDirectory . '/../Web/' . $controller . '_' . $action. '.html';
@@ -84,7 +101,7 @@ class RenderService
             }
             $view = $this->viewService->getView($controller, $variables);
             file_put_contents($outputFileName  , $view->render($action));
-            $this->output->writeln('<info>Rendering:</info> ' . realpath($outputFileName));
+            $this->output->writeln(' ... ' . realpath($outputFileName));
         }
     }
 
