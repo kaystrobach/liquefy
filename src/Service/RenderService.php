@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 
 class RenderService
 {
@@ -52,10 +53,7 @@ class RenderService
     {
         $this->output = $output;
 
-        $controllerActions = [
-            'Authentication/Index',
-            'Application/Index'
-        ];
+        $controllerActions = $this->getControllerAndActions();
 
         $this->cleanup();
         $this->renderTemplates($controllerActions);
@@ -71,18 +69,63 @@ class RenderService
 
     protected function getControllerAndActions()
     {
+        $templateDirectory = $this->baseDirectory. '/../Resources/Private/Templates';
         $controllersAndActions = [];
         $finder = new Finder();
-        $files = $finder->files()->in($this->baseDirectory. '/Resources/Private/Templates')->name('*.html');
+        /** @var FilenameFilterIterator $templateFiles */
+        $templateFiles = $finder->files()->in($templateDirectory)->name('*.html');
+
         /** @var \SplFileInfo $file */
-        foreach($finder as $file) {
-            $controllersAndActions[] = [
-                'controller' => basename($file->getPathname()),
-                'action' => $file->getBasename('.html')
-            ];
-            // add reading json and yaml file
+        foreach($templateFiles as $file) {
+            $controller = basename($file->getPath());
+            $action  = $file->getBasename('.html');
+
+            $data = $this->getProvidedData($templateDirectory, $controller, $action);
+
+            foreach($data as $dataFileName => $data) {
+                $controllersAndActions[] = [
+                    'controller' => $controller,
+                    'action' => $action,
+                    'controllerAction' => $controller . ' / ' . $action,
+                    'input' => [
+                        'dataFileName' => $dataFileName,
+                        'data' => $data
+                    ],
+                    'output' => [
+                        'outputFileName' => $controller . '.' . $action . '.' . $dataFileName . '.html'
+                    ]
+                ];
+            }
         }
         return $controllersAndActions;
+    }
+
+    /**
+     * @param $templateDirectory
+     * @param $controller
+     * @param $action
+     * @return array
+     */
+    protected function getProvidedData($templateDirectory, $controller, $action)
+    {
+        $data = [];
+        $finder = new Finder();
+        /** @var FilenameFilterIterator $dataFiles */
+        $dataFiles = $finder->files()->in($templateDirectory . '/' . $controller)->name($action . '*.json');
+
+        /** @var \SplFileInfo $dataFile */
+        foreach ($dataFiles as $dataFile) {
+            $data[$dataFile->getBasename('.json')] = json_decode(file_get_contents($dataFile->getRealPath()), true);
+        }
+
+        if (count($data) === 0) {
+            return [
+                'Default' => [
+                ]
+            ];
+        }
+
+        return $data;
     }
 
     /**
@@ -92,15 +135,15 @@ class RenderService
     {
         $this->output->writeln('<info>Rendering:</info>');
         foreach ($controllerActions as $controllerAndAction) {
-            list($controller, $action) = explode('/', $controllerAndAction);
-            $outputFileName = $this->baseDirectory . '/../Web/' . $controller . '_' . $action. '.html';
-            $jsonFileName = $this->baseDirectory . '/../Resources/Private/Templates/' . $controllerAndAction . '.json';
-            $variables = [];
-            if (file_exists($jsonFileName)) {
-                $variables = json_decode(file_get_contents($jsonFileName), true);
-            }
-            $view = $this->viewService->getView($controller, $variables);
-            file_put_contents($outputFileName  , $view->render($action));
+            $outputFileName = $this->baseDirectory . '/../Web/' . $controllerAndAction['output']['outputFileName'];
+            $view = $this->viewService->getView(
+                $controllerAndAction['controller'],
+                $controllerAndAction['input']['data']
+            );
+            file_put_contents(
+                $outputFileName,
+                $view->render($controllerAndAction['action'])
+            );
             $this->output->writeln(' ... ' . realpath($outputFileName));
         }
     }
@@ -116,21 +159,8 @@ class RenderService
     protected function renderIndex($controllerActions)
     {
         $variables = [
-            'files' => []
+            'files' => $controllerActions
         ];
-        foreach ($controllerActions as $controllerAndAction) {
-            list($controller, $action) = explode('/', $controllerAndAction);
-            $variables['files'][] = [
-                'controller' => $controller,
-                'action' => $action,
-                'input' => [
-                    'filename' => ''
-                ],
-                'output' => [
-                    'filename' => $controller . '_' . $action . '.html'
-                ]
-            ];
-        }
 
         $view = $this->viewService->getViewFromFile(
             __DIR__ . '/../../Resources/Private/Templates/Overview/Index.html',
@@ -141,17 +171,5 @@ class RenderService
             $this->baseDirectory . '/../Web/index.html',
             $view->render()
         );
-    }
-
-    protected function getControllersAndActions()
-    {
-        $controllersAndActions = [];
-        $finder = new Finder();
-        $files = $finder->files()->in($this->baseDirectory . '/../Resources/Private/Templates')->notName('*.json')->getIterator();
-        /** @var \SplFileInfo $file */
-        foreach ($files as $file) {
-            $controllersAndActions[] = new Action($file);
-        }
-        return $controllersAndActions;
     }
 }
