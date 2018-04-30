@@ -1,23 +1,81 @@
 <html>
     <head>
         <title>
-
+            Rendered Overview
         </title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <style type="text/css">
+            .iframe-zoomed-wrap {
+                width: 100%;
+                height: 216px;
+                padding: 0;
+                overflow: hidden;
+                background-color: #6c757d;
+            }
+            .iframe-zoomed {
+                width: 1920px;
+                height: 1080px;
+                border: 0;
+
+                -ms-transform: scale(0.2);
+                -moz-transform: scale(0.2);
+                -o-transform: scale(0.2);
+                -webkit-transform: scale(0.2);
+                transform: scale(0.2);
+
+                -ms-transform-origin: 0 0;
+                -moz-transform-origin: 0 0;
+                -o-transform-origin: 0 0;
+                -webkit-transform-origin: 0 0;
+                transform-origin: 0 0;
+            }
+        </style>
     </head>
     <body>
-        <ul>
-            <f:groupedFor each="{files}" as="groupedFiles" groupBy="controllerAction" groupKey="controllerAction">
-                <li>
-                    {controllerAction}
-                    <ul>
-                        <f:for each="{groupedFiles}" as="file">
-                            <li>
-                                <a href="{file.output.outputFileName}">{file.controller} / {file.action} / {file.input.dataFileName}</a>
-                            </li>
-                        </f:for>
-                    </ul>
-                </li>
-            </f:groupedFor>
-        </ul>
+        <div class="container">
+            <div class="card-columns">
+                <f:groupedFor each="{files}" as="groupedFiles" groupBy="controllerAction" groupKey="controllerAction">
+                    <div class="card w-10">
+                        <div class="iframe-zoomed-wrap">
+                            <f:comment>Fix problem with popping the first entry here to get a valid preview</f:comment>
+                            <f:for each="{groupedFiles}" as="file" iteration="iteration">
+                                <f:if condition="{iteration.isFirst}">
+                                    <iframe class="iframe-zoomed" src="{file.output.outputFileName}"></iframe>
+                                </f:if>
+                            </f:for>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{controllerAction}</h5>
+                            <f:if condition="{groupedFiles -> f:count()} == 1">
+                                <f:then>
+                                    <f:for each="{groupedFiles}" as="file">
+                                        <a href="{file.output.outputFileName}" class="btn btn-secondary">
+                                            View
+                                        </a>
+                                    </f:for>
+                                </f:then>
+                                <f:else>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {groupedFiles -> f:count()} Variants
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <f:for each="{groupedFiles}" as="file">
+                                                <a class="dropdown-item" href="{file.output.outputFileName}">View {file.input.dataFileName}</a>
+                                            </f:for>
+                                        </div>
+                                    </div>
+                                </f:else>
+                            </f:if>
+                        </div>
+                    </div>
+                </f:groupedFor>
+            </div>
+        </div>
     </body>
 </html>
