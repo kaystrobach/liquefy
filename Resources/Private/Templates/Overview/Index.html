@@ -6,11 +6,18 @@
     </head>
     <body>
         <ul>
-            <f:for each="{files}" as="file">
+            <f:groupedFor each="{files}" as="groupedFiles" groupBy="controllerAction" groupKey="controllerAction">
                 <li>
-                    <a href="{file.output.filename}">{file.controller} / {file.action}</a>
+                    {controllerAction}
+                    <ul>
+                        <f:for each="{groupedFiles}" as="file">
+                            <li>
+                                <a href="{file.output.outputFileName}">{file.controller} / {file.action} / {file.input.dataFileName}</a>
+                            </li>
+                        </f:for>
+                    </ul>
                 </li>
-            </f:for>
+            </f:groupedFor>
         </ul>
     </body>
 </html>
