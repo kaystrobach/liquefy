@@ -1,5 +1,9 @@
 <html>
     <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
         <title>
             Rendered Overview
         </title>
@@ -17,16 +21,9 @@
                 overflow: hidden;
                 background-color: #6c757d;
             }
-            .iframe-zoomed {
-                width: 1920px;
-                height: 1080px;
-                border: 0;
 
-                -ms-transform: scale(0.2);
-                -moz-transform: scale(0.2);
-                -o-transform: scale(0.2);
-                -webkit-transform: scale(0.2);
-                transform: scale(0.2);
+            .iframe-zoomed-wrap iframe {
+                border: 0;
 
                 -ms-transform-origin: 0 0;
                 -moz-transform-origin: 0 0;
@@ -34,18 +31,52 @@
                 -webkit-transform-origin: 0 0;
                 transform-origin: 0 0;
             }
+
+            .iframe-zoomed-desktop {
+                width: 1280px;
+                height: 780px;
+
+                -ms-transform: scale(0.28);
+                -moz-transform: scale(0.28);
+                -o-transform: scale(0.28);
+                -webkit-transform: scale(0.28);
+                transform: scale(0.28);
+            }
+
+            .iframe-zoomed-iphone-6s {
+                width: 365px;
+                height: 667px;
+
+                -ms-transform: scale(0.33);
+                -moz-transform: scale(0.33);
+                -o-transform: scale(0.33);
+                -webkit-transform: scale(0.33);
+                transform: scale(0.33);
+            }
+
+            .iframe-zoomed-iphone-se {
+                width: 320px;
+                height: 568px;
+
+                -ms-transform: scale(0.38);
+                -moz-transform: scale(0.38);
+                -o-transform: scale(0.38);
+                -webkit-transform: scale(0.38);
+                transform: scale(0.38);
+            }
+
         </style>
     </head>
     <body>
         <div class="container">
             <div class="card-columns">
                 <f:groupedFor each="{files}" as="groupedFiles" groupBy="controllerAction" groupKey="controllerAction">
-                    <div class="card w-10">
+                    <div class="card">
                         <div class="iframe-zoomed-wrap">
                             <f:comment>Fix problem with popping the first entry here to get a valid preview</f:comment>
                             <f:for each="{groupedFiles}" as="file" iteration="iteration">
                                 <f:if condition="{iteration.isFirst}">
-                                    <iframe class="iframe-zoomed" src="{file.output.outputFileName}"></iframe>
+                                    <iframe class="iframe-zoomed-desktop" src="{file.output.outputFileName}"></iframe>
                                 </f:if>
                             </f:for>
                         </div>
@@ -57,6 +88,10 @@
                                         <a href="{file.output.outputFileName}" class="btn btn-secondary">
                                             View
                                         </a>
+                                        <button type="button" class="btn btn-primary"
+                                                data-toggle="modal" data-target="#previewModal"
+                                                data-uri="{file.output.outputFileName}">Device Preview</button>
+
                                     </f:for>
                                 </f:then>
                                 <f:else>
@@ -77,5 +112,51 @@
                 </f:groupedFor>
             </div>
         </div>
+
+        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-group">
+                            <div class="card">
+                                <div class="iframe-zoomed-wrap">
+                                    <iframe class="iframe-zoomed-desktop" src=""></iframe>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="iframe-zoomed-wrap">
+                                    <iframe class="iframe-zoomed-iphone-6s" src=""></iframe>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="iframe-zoomed-wrap">
+                                    <iframe class="iframe-zoomed-iphone-se" src=""></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $('#previewModal').on('show.bs.modal', function (event) {
+                console.log('title');
+                let button = $(event.relatedTarget) // Button that triggered the modal
+                let uri = button.data('uri');
+                let modal = $(this)
+                modal.find('.modal-title').text(uri);
+                modal.find('.modal-body iframe').attr('src', uri);
+            });
+        </script>
     </body>
 </html>
