@@ -65,6 +65,9 @@
                 transform: scale(0.38);
             }
 
+            .modal-fullscreen {
+                max-width: 95%;
+            }
         </style>
     </head>
     <body>
@@ -114,7 +117,7 @@
         </div>
 
         <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModal" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">New message</h5>
@@ -125,16 +128,19 @@
                     <div class="modal-body">
                         <div class="card-group">
                             <div class="card">
+                                <div class="card-header">Desktop</div>
                                 <div class="iframe-zoomed-wrap">
                                     <iframe class="iframe-zoomed-desktop" src=""></iframe>
                                 </div>
                             </div>
                             <div class="card">
+                                <div class="card-header">iPhone 6s</div>
                                 <div class="iframe-zoomed-wrap">
                                     <iframe class="iframe-zoomed-iphone-6s" src=""></iframe>
                                 </div>
                             </div>
                             <div class="card">
+                                <div class="card-header">iPhone SE</div>
                                 <div class="iframe-zoomed-wrap">
                                     <iframe class="iframe-zoomed-iphone-se" src=""></iframe>
                                 </div>
