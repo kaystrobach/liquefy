@@ -73,7 +73,7 @@ class RenderService
         $controllersAndActions = [];
         $finder = new Finder();
         /** @var FilenameFilterIterator $templateFiles */
-        $templateFiles = $finder->files()->in($templateDirectory)->name('*.html');
+        $templateFiles = $finder->files()->in($templateDirectory)->name('*.html')->sortByName();
 
         /** @var \SplFileInfo $file */
         foreach($templateFiles as $file) {
@@ -111,7 +111,7 @@ class RenderService
         $data = [];
         $finder = new Finder();
         /** @var FilenameFilterIterator $dataFiles */
-        $dataFiles = $finder->files()->in($templateDirectory . '/' . $controller)->name($action . '*.json');
+        $dataFiles = $finder->files()->in($templateDirectory . '/' . $controller)->name($action . '*.json')->sortByName();
 
         /** @var \SplFileInfo $dataFile */
         foreach ($dataFiles as $dataFile) {
