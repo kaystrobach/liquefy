@@ -55,10 +55,10 @@ class RenderCommand extends Command
         $renderService = new RenderService();
         $renderService->setBaseDirectory(BASE_DIRECTORY);
 
+        $this->executeOneTime($renderService, $input, $output);
+
         if ($input->getOption('watch')) {
             $this->watchForChangesAndExecute($renderService, $input, $output);
-        } else {
-            $this->executeOneTime($renderService, $input, $output);
         }
 
         return 0;
