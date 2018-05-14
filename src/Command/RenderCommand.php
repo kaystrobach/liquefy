@@ -30,7 +30,8 @@ class RenderCommand extends Command
         $this
             ->setName('render:all')
             ->setDescription('render fluid templates')
-            ->addOption('watch', 'w', InputOption::VALUE_NONE, 'Should we watch file changes?')
+            ->addOption('watch', 'w', InputOption::VALUE_NONE, 'Watch for file changes')
+            ->addOption('serve', 's', InputOption::VALUE_NONE, 'Serve with php internal webserver')
         ;
     }
 
@@ -75,7 +76,7 @@ class RenderCommand extends Command
         $tracker = new \JasonLewis\ResourceWatcher\Tracker;
         $watcher = new \JasonLewis\ResourceWatcher\Watcher($tracker, $files);
 
-        $watchDirectory = BASE_DIRECTORY . '/../Resources/Private/';
+        $watchDirectory = BASE_DIRECTORY . '/../Resources/';
         $listener = $watcher->watch($watchDirectory);
 
         $output->writeln('<info>Now watching</info>:');

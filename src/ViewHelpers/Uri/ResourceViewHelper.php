@@ -29,6 +29,6 @@ class ResourceViewHelper extends AbstractViewHelper
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
-        return 'Resources/Public/' . $arguments['path'];
+        return '../Resources/Public/' . $arguments['path'];
     }
 }

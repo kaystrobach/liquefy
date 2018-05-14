@@ -33,11 +33,16 @@ class ViewService
         return $view;
     }
 
-    function getViewFromFile($string, $variables = [])
+    function getViewFromFile($string, $variables = [], $partialRootPaths = [])
     {
         $view = new TemplateView();
         $paths = $view->getTemplatePaths();
+        $paths->setPartialRootPaths($partialRootPaths);
         $paths->setTemplatePathAndFilename($string);
+        $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
+            'f',
+            'KayStrobach\\Liquefy\\ViewHelpers'
+        );
         $view->assignMultiple($variables);
         return $view;
     }

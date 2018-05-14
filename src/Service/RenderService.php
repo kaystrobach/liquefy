@@ -14,6 +14,7 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
+use Symfony\Component\Yaml\Yaml;
 
 class RenderService
 {
@@ -65,11 +66,13 @@ class RenderService
     {
         exec('rm -rf ' . $this->baseDirectory . '/../Web/Resources');
         exec ('mkdir -p ' . $this->baseDirectory . '/../Web/Resources');
+        exec ('mkdir -p ' . $this->baseDirectory . '/../Web/Templates');
     }
 
     protected function getControllerAndActions()
     {
-        $templateDirectory = $this->baseDirectory. '/../Resources/Private/Templates';
+        $templateDirectory = $this->baseDirectory . '/../Resources/Private/Templates';
+        $templateDataDirectory = $this->baseDirectory . '/../Resources/Private/TemplatesExampleData';
         $controllersAndActions = [];
         $finder = new Finder();
         /** @var FilenameFilterIterator $templateFiles */
@@ -80,7 +83,7 @@ class RenderService
             $controller = basename($file->getPath());
             $action  = $file->getBasename('.html');
 
-            $data = $this->getProvidedData($templateDirectory, $controller, $action);
+            $data = $this->getProvidedData($templateDataDirectory, $controller, $action);
 
             foreach($data as $dataFileName => $data) {
                 $controllersAndActions[] = [
@@ -92,30 +95,62 @@ class RenderService
                         'data' => $data
                     ],
                     'output' => [
-                        'outputFileName' => $controller . '.' . $action . '.' . $dataFileName . '.html'
+                        'outputFileName' => 'Templates/' . $controller . '.' . $action . '.' . $dataFileName . '.html'
                     ]
                 ];
             }
         }
+
+        usort(
+            $controllersAndActions,
+            function($a, $b) {
+                if ($a['controller'] === $b['controller']) {
+                    if ($a['action'] < $b['action']) {
+                        return -1;
+                    }
+                    return 1;
+                }
+                if ($a['controller'] < $b['controller']) {
+                    return -1;
+                }
+                return 1;
+            }
+        );
+
         return $controllersAndActions;
     }
 
     /**
-     * @param $templateDirectory
+     * @param $templateExampleDataDirectory
      * @param $controller
      * @param $action
      * @return array
      */
-    protected function getProvidedData($templateDirectory, $controller, $action)
+    protected function getProvidedData($templateExampleDataDirectory, $controller, $action)
     {
         $data = [];
         $finder = new Finder();
-        /** @var FilenameFilterIterator $dataFiles */
-        $dataFiles = $finder->files()->in($templateDirectory . '/' . $controller)->name($action . '*.json')->sortByName();
 
-        /** @var \SplFileInfo $dataFile */
-        foreach ($dataFiles as $dataFile) {
-            $data[$dataFile->getBasename('.json')] = json_decode(file_get_contents($dataFile->getRealPath()), true);
+        $directory = $templateExampleDataDirectory . DIRECTORY_SEPARATOR . $controller . DIRECTORY_SEPARATOR . $action;
+
+        if (is_dir($directory)) {
+            /** @var FilenameFilterIterator $dataFiles */
+            $dataFiles = $finder->files()->in($directory)->name('/.[json|yaml|yml]$/')->sortByName();
+
+            /** @var \SplFileInfo $dataFile */
+            foreach ($dataFiles as $dataFile) {
+                switch ($dataFile->getExtension()) {
+                    case 'json':
+                        $data[$dataFile->getBasename('.' . $dataFile->getExtension())] = json_decode(file_get_contents($dataFile->getRealPath()), true);
+                        break;
+                    case 'yaml':
+                    case 'yml':
+                        $data[$dataFile->getBasename('.' . $dataFile->getExtension())] = Yaml::parseFile($dataFile->getRealPath());
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         if (count($data) === 0) {
@@ -164,7 +199,10 @@ class RenderService
 
         $view = $this->viewService->getViewFromFile(
             __DIR__ . '/../../Resources/Private/Templates/Overview/Index.html',
-            $variables
+            $variables,
+            [
+                __DIR__ . '/../../Resources/Private/Partials'
+            ]
         );
 
         file_put_contents(

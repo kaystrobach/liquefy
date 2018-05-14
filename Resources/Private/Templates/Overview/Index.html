@@ -14,17 +14,25 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
         <style type="text/css">
+            .phone {
+                border: 55px solid #ddd;
+                border-right-width: 7px;
+                border-left-width: 7px;
+                border-radius: 40px;
+                margin: 50px auto;
+                overflow: hidden;
+                transition: all 0.5s ease;
+            }
             .iframe-zoomed-wrap {
                 width: 100%;
-                height: 216px;
+                height: 230px;
                 padding: 0;
                 overflow: hidden;
                 background-color: #6c757d;
+                margin: auto;
             }
-
             .iframe-zoomed-wrap iframe {
                 border: 0;
-
                 -ms-transform-origin: 0 0;
                 -moz-transform-origin: 0 0;
                 -o-transform-origin: 0 0;
@@ -33,6 +41,9 @@
             }
 
             .iframe-zoomed-desktop {
+                width: 358px;
+            }
+            .iframe-zoomed-desktop iframe {
                 width: 1280px;
                 height: 780px;
 
@@ -44,6 +55,9 @@
             }
 
             .iframe-zoomed-iphone-6s {
+                width: 120px;
+            }
+            .iframe-zoomed-iphone-6s iframe {
                 width: 365px;
                 height: 667px;
 
@@ -55,6 +69,9 @@
             }
 
             .iframe-zoomed-iphone-se {
+                width: 121px;
+            }
+            .iframe-zoomed-iphone-se iframe {
                 width: 320px;
                 height: 568px;
 
@@ -65,103 +82,69 @@
                 transform: scale(0.38);
             }
 
+            .iframe-zoomed-ipad-air {
+                width: 287px;
+            }
+            .iframe-zoomed-ipad-air iframe {
+                width: 1024px;
+                height: 768px;
+
+                -ms-transform: scale(0.28);
+                -moz-transform: scale(0.28);
+                -o-transform: scale(0.28);
+                -webkit-transform: scale(0.28);
+                transform: scale(0.28);
+            }
+
             .modal-fullscreen {
                 max-width: 95%;
             }
+
+            .card-columns {
+                -webkit-column-count: 2;
+                -moz-column-count: 2;
+                column-count: 2;
+            }
         </style>
     </head>
-    <body>
+    <body class="bg-light">
+        <f:render partial="NavBar" arguments="{_all}"/>
+
         <div class="container">
-            <div class="card-columns">
-                <f:groupedFor each="{files}" as="groupedFiles" groupBy="controllerAction" groupKey="controllerAction">
-                    <div class="card">
-                        <div class="iframe-zoomed-wrap">
-                            <f:comment>Fix problem with popping the first entry here to get a valid preview</f:comment>
-                            <f:for each="{groupedFiles}" as="file" iteration="iteration">
-                                <f:if condition="{iteration.isFirst}">
-                                    <iframe class="iframe-zoomed-desktop" src="{file.output.outputFileName}"></iframe>
-                                </f:if>
-                            </f:for>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{controllerAction}</h5>
-                            <f:if condition="{groupedFiles -> f:count()} == 1">
-                                <f:then>
-                                    <f:for each="{groupedFiles}" as="file">
-                                        <a href="{file.output.outputFileName}" class="btn btn-secondary">
-                                            View
-                                        </a>
-                                        <button type="button" class="btn btn-primary"
-                                                data-toggle="modal" data-target="#previewModal"
-                                                data-uri="{file.output.outputFileName}">Device Preview</button>
-
-                                    </f:for>
-                                </f:then>
-                                <f:else>
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            {groupedFiles -> f:count()} Variants
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <f:for each="{groupedFiles}" as="file">
-                                                <a class="dropdown-item" href="{file.output.outputFileName}">View {file.input.dataFileName}</a>
-                                            </f:for>
-                                        </div>
-                                    </div>
-                                </f:else>
-                            </f:if>
-                        </div>
-                    </div>
-                </f:groupedFor>
-            </div>
-        </div>
-
-        <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModal" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-fullscreen" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card-group">
-                            <div class="card">
-                                <div class="card-header">Desktop</div>
-                                <div class="iframe-zoomed-wrap">
-                                    <iframe class="iframe-zoomed-desktop" src=""></iframe>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">iPhone 6s</div>
-                                <div class="iframe-zoomed-wrap">
-                                    <iframe class="iframe-zoomed-iphone-6s" src=""></iframe>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">iPhone SE</div>
-                                <div class="iframe-zoomed-wrap">
-                                    <iframe class="iframe-zoomed-iphone-se" src=""></iframe>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+            <f:groupedFor each="{files}" as="groupedByController" groupBy="controller" groupKey="controller">
+                <div class="p-4" id="controller-{controller}"></div>
+                <h2 class="display-4">{controller}</h2>
+                <div class="card-columns">
+                    <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
+                        <f:render partial="Card" arguments="{_all}"/>
+                    </f:groupedFor>
                 </div>
-            </div>
+            </f:groupedFor>
         </div>
+
+        <f:render partial="Modal" />
 
         <script type="text/javascript">
             $('#previewModal').on('show.bs.modal', function (event) {
-                console.log('title');
                 let button = $(event.relatedTarget) // Button that triggered the modal
                 let uri = button.data('uri');
                 let modal = $(this)
-                modal.find('.modal-title').text(uri);
-                modal.find('.modal-body iframe').attr('src', uri);
+                let template = modal.find('.template')
+
+                //modal.find('.modal-title').text(uri);
+                console.log(modal.find('.modal-body'));
+                modal.find('.modal-body').find('*').remove();
+
+                $.each(
+                    button.data('uris'),
+                    function( key, value ) {
+                        let clon = template.clone();
+                        clon.find('h2').text(value.input.dataFileName)
+                        clon.removeClass('d-none');
+                        clon.find('iframe').attr('src', value.output.outputFileName);
+                        modal.find('.modal-body').append(clon);
+                    }
+                );
             });
         </script>
     </body>

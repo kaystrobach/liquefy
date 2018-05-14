@@ -1,0 +1,44 @@
+<div class="card shadow mb-5 bg-white rounded">
+    <div class="card-header bg-transparent">
+        {controller} / {action}
+    </div>
+    <div class="iframe-zoomed-wrap iframe-zoomed-desktop">
+        <f:comment>Fix problem with popping the first entry here to get a valid preview</f:comment>
+        <f:for each="{groupedFiles}" as="file" iteration="iteration">
+            <f:if condition="{iteration.isFirst}">
+                <iframe src="{file.output.outputFileName}"></iframe>
+            </f:if>
+        </f:for>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group" role="group" aria-label="Actions">
+            <f:if condition="{groupedFiles -> f:count()} == 1">
+                <f:then>
+                    <f:for each="{groupedFiles}" as="file">
+                        <a href="{file.output.outputFileName}" class="btn btn-secondary">
+                            View
+                        </a>
+                    </f:for>
+                </f:then>
+                <f:else>
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {groupedFiles -> f:count()} Variants
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <f:for each="{groupedFiles}" as="file">
+                                <a class="dropdown-item" href="{file.output.outputFileName}">View {file.input.dataFileName}</a>
+                            </f:for>
+                        </div>
+                    </div>
+                </f:else>
+            </f:if>
+
+            <button type="button" class="btn btn-success"
+                    data-toggle="modal" data-target="#previewModal"
+                    data-uri="{file.output.outputFileName}"
+                    data-uris="{groupedFiles -> f:format.json()}"
+            >Device Preview</button>
+        </div>
+    </div>
+</div>
