@@ -1,0 +1,67 @@
+#-----------------------------------------------------------------------------------------------------------------------
+layout:
+  brand:
+    name: "liquefy by 4viewture"
+    link: "https://4viewture.eu"
+  logo:
+    name: ""
+    link: ""
+    file: ""
+  lazyload: true
+  livereload: true
+
+#-----------------------------------------------------------------------------------------------------------------------
+#hooks:
+#  preRender:
+#    - npm build
+#  postRender:
+#    -
+#-----------------------------------------------------------------------------------------------------------------------
+rendering:
+  #---------------------------------------------------------------------------------------------------------------------
+  # Rendering of the welcome screen
+  overview:
+    templateFile: %liquefyPackagePath%/Resources/Private/Templates/Overview/Index.html
+    layoutRootPaths:
+      - %liquefyPackagePath%/Resources/Private/Layouts/
+    partialRootPaths:
+      - %liquefyPackagePath%/Resources/Private/Partials
+  #---------------------------------------------------------------------------------------------------------------------
+  # settings for the detail views
+  templates:
+    templatePaths:
+      - %rootPath%/Resources/Private/Templates/
+    layoutRootPaths:
+      - %rootPath%/Resources/Private/Layouts/
+    partialRootPaths:
+      - %rootPath%/Resources/Private/Partials
+    databagPath:
+      - %rootPath%/Resources/Private/TemplatesExampleData/%controller%/%action%/
+  #---------------------------------------------------------------------------------------------------------------------
+  # settings for the partials which are rendered
+  partials:
+    templateFile: %liquefyPackagePath%/Resources/Private/Templates/Partials/Index.html
+    layoutRootPaths:
+      - %rootPath%/Resources/Private/Layouts/
+    partialRootPaths:
+      - %rootPath%/Resources/Private/Partials
+    databagPath:
+      - %rootPath%/Resources/Private/PartialsExampleData/%partial%/
+  #---------------------------------------------------------------------------------------------------------------------
+  # Allow custom viewHelpers to be loaded from external libraries
+  viewHelpers:
+    fluidNamespaces:
+        f:
+            - TYPO3\CMS\Fluid\ViewHelpers
+            - KayStrobach\Liquefy\ViewHelpers
+    # This is a planned feature for displaying content of non created viewHelpers
+    # This is inspired by https://github.com/NamelessCoder/patternlab-fluid-patternengine/tree/master/src/Emulation
+    emulatedViewHelpers:
+        My\Special\TagGeneratingViewHelper:
+            tagName: "a"
+            attributeMap:
+                specialTargetArgumentName: "href"
+            outputsTagContent: true
+            forceClosingTag: true
+        My\Special\NormalViewHelper:
+            outputsTagContent: true
