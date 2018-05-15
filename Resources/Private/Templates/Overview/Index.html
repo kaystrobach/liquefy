@@ -120,17 +120,35 @@
     <body class="bg-light">
         <f:render partial="NavBar" arguments="{_all}"/>
 
-        <div class="container">
-            <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
-                <div class="p-4" id="controller-{controller}"></div>
-                <h2 class="display-4">{controller}</h2>
-                <div class="card-columns">
-                    <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
-                        <f:render partial="Card" arguments="{_all}"/>
-                    </f:groupedFor>
-                </div>
-            </f:groupedFor>
-        </div>
+        <f:if condition="{templates}">
+            <div class="container">
+                <h1 class="display-1">Templates</h1>
+                <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
+                    <div class="p-4" id="controller-{controller}"></div>
+                    <h2 class="display-4">{controller}</h2>
+                    <div class="card-columns">
+                        <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
+                            <f:render partial="Card" arguments="{_all}"/>
+                        </f:groupedFor>
+                    </div>
+                </f:groupedFor>
+            </div>
+        </f:if>
+
+        <f:if condition="{partials}">
+            <div class="container">
+                <h1 class="display-1">Partials</h1>
+                <f:groupedFor each="{partials}" as="groupedByController" groupBy="controller" groupKey="controller">
+                    <div class="p-4" id="partial-{controller}"></div>
+                    <h2 class="display-4">{controller}</h2>
+                    <div class="card-columns">
+                        <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
+                            <f:render partial="Card" arguments="{_all}"/>
+                        </f:groupedFor>
+                    </div>
+                </f:groupedFor>
+            </div>
+        </f:if>
 
         <f:render partial="Modal" />
 
