@@ -1,5 +1,8 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="{settings.layout.brand.link}">
+        <f:if condition="{settings.layout.logo.file}">
+            <img src="{settings.layout.logo.file}" alt="{settings.layout.brand.name}" title="{settings.layout.brand.name}" class="d-inline-block align-top" height="30" width="30">
+        </f:if>
         {settings.layout.brand.name}
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
