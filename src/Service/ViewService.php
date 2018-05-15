@@ -46,7 +46,9 @@ class ViewService
             ]
         );
         $view->getRenderingContext()->setControllerName($controller);
-        $view->assignMultiple($variables);
+        if (is_array($variables)) {
+            $view->assignMultiple($variables);
+        }
         return $view;
     }
 
@@ -58,7 +60,9 @@ class ViewService
             $partialRootPaths
         );
         $view->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
-        $view->assignMultiple($variables);
+        if (is_array($variables)) {
+            $view->assignMultiple($variables);
+        }
         return $view;
     }
 }
