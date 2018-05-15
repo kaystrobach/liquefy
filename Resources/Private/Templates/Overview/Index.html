@@ -121,7 +121,7 @@
         <f:render partial="NavBar" arguments="{_all}"/>
 
         <div class="container">
-            <f:groupedFor each="{files}" as="groupedByController" groupBy="controller" groupKey="controller">
+            <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
                 <div class="p-4" id="controller-{controller}"></div>
                 <h2 class="display-4">{controller}</h2>
                 <div class="card-columns">
