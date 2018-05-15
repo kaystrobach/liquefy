@@ -39,6 +39,13 @@
                     data-uri="{file.output.outputFileName}"
                     data-uris="{groupedFiles -> f:format.json()}"
             >Device Preview</button>
+            <f:for each="{settings.tracker}" as="tracker">
+                <f:if condition="{tracker.enable}">
+                    <a href="{tracker.link.url}{tracker.link.params -> f:format.queryString()}" class="btn btn-secondary">
+                        {tracker.name}
+                    </a>
+                </f:if>
+            </f:for>
         </div>
     </div>
 </div>

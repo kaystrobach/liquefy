@@ -10,6 +10,15 @@ layout:
   lazyload: true
   livereload: true
 
+tracker:
+  gitlab:
+    enable: false
+    name: "Gitlab"
+    link:
+      url: "https://gitlab.com"
+      params:
+        "issue[title]": "Problem with %templatefile% and %datafile"
+        "issue[description]": "Please provide as much information as possible"
 #-----------------------------------------------------------------------------------------------------------------------
 #hooks:
 #  preRender:

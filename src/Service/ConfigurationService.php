@@ -38,7 +38,7 @@ class ConfigurationService
     protected function mergeConfigurationFromFile($file)
     {
         if (is_readable($file)) {
-            $this->configuration = array_merge(
+            $this->configuration = array_replace_recursive(
                 $this->configuration,
                 Yaml::parseFile($file)
             );
