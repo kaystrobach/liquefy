@@ -155,8 +155,7 @@ class RenderService
 
         if (count($data) === 0) {
             return [
-                'Default' => [
-                ]
+                'Default' => []
             ];
         }
 
@@ -189,17 +188,17 @@ class RenderService
     }
 
     /**
-     * @param array $controllerActions
+     * @param array $templates
+     * @param array $partials
      */
-    protected function renderIndex($controllerActions)
+    protected function renderIndex($templates, $partials = [])
     {
-        $variables = [
-            'files' => $controllerActions
-        ];
-
         $view = $this->viewService->getViewFromFile(
             __DIR__ . '/../../Resources/Private/Templates/Overview/Index.html',
-            $variables,
+            [
+                'templates' => $templates,
+                'partials' => $partials
+            ],
             [
                 __DIR__ . '/../../Resources/Private/Partials'
             ]

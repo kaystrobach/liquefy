@@ -11,10 +11,10 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Controller
+                    Templates
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <f:groupedFor each="{files}" as="groupedByController" groupBy="controller" groupKey="controller">
+                    <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
                         <a class="dropdown-item" href="#controller-{controller}">{controller}</a>
                     </f:groupedFor>
                 </div>
