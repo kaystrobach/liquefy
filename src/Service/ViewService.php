@@ -6,43 +6,58 @@ use TYPO3Fluid\Fluid\View\TemplateView;
 
 class ViewService
 {
-    function getView($controller = 'Default', $variables = []) {
+    function initializeView($templateRootPaths, $layoutRootPaths, $partialRootPaths, $namespaces = [])
+    {
         $view = new TemplateView();
         $paths = $view->getTemplatePaths();
         $paths->setTemplateRootPaths(
-            [
-                BASE_DIRECTORY . '/../Resources/Private/Templates/'
-            ]
+            $templateRootPaths
         );
         $paths->setLayoutRootPaths(
-            [
-                BASE_DIRECTORY . '/../Resources/Private/Layouts/'
-            ]
+            $layoutRootPaths
         );
         $paths->setPartialRootPaths(
+            $partialRootPaths
+        );
+
+        $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
+            'f', 'KayStrobach\\Liquefy\\ViewHelpers'
+        );
+
+        foreach ($namespaces as $namespace => $classPath) {
+            $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
+                $namespace,
+                $classPath
+            );
+        }
+
+        return $view;
+    }
+
+    function getView($controller = 'Default', $variables = [])
+    {
+        $view = $this->initializeView(
             [
-                BASE_DIRECTORY . '/../Resources/Private/Partials/'
+                BASE_DIRECTORY . '/Resources/Private/Templates/'
+            ], [
+                BASE_DIRECTORY . '/Resources/Private/Layouts/'
+            ], [
+                BASE_DIRECTORY . '/Resources/Private/Partials/'
             ]
         );
         $view->getRenderingContext()->setControllerName($controller);
-        $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
-            'f',
-            'KayStrobach\\Liquefy\\ViewHelpers'
-        );
         $view->assignMultiple($variables);
         return $view;
     }
 
-    function getViewFromFile($string, $variables = [], $partialRootPaths = [])
+    function getViewFromFile($templatePathAndFilename, $partialRootPaths = [], $variables = [])
     {
-        $view = new TemplateView();
-        $paths = $view->getTemplatePaths();
-        $paths->setPartialRootPaths($partialRootPaths);
-        $paths->setTemplatePathAndFilename($string);
-        $view->getRenderingContext()->getViewHelperResolver()->addNamespace(
-            'f',
-            'KayStrobach\\Liquefy\\ViewHelpers'
+        $view = $this->initializeView(
+            [],
+            [],
+            $partialRootPaths
         );
+        $view->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
         $view->assignMultiple($variables);
         return $view;
     }

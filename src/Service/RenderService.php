@@ -41,6 +41,11 @@ class RenderService
     protected $output;
 
     /**
+     * @var ConfigurationService
+     */
+    protected $configurationService;
+
+    /**
      * @param string $baseDirectory
      */
     public function setBaseDirectory($baseDirectory)
@@ -48,6 +53,8 @@ class RenderService
         $this->baseDirectory = $baseDirectory;
         $this->viewService = new ViewService();
         $this->resourceService = new ResourceService();
+        $this->configurationService = new ConfigurationService();
+        $this->configurationService->applySpecialConfiguration(LIQUEFY_CWD . '/.liquefy.yaml');
     }
 
     public function render(InputInterface $input, OutputInterface $output)
@@ -64,15 +71,15 @@ class RenderService
 
     protected function cleanup()
     {
-        exec('rm -rf ' . $this->baseDirectory . '/../Web/Resources');
-        exec ('mkdir -p ' . $this->baseDirectory . '/../Web/Resources');
-        exec ('mkdir -p ' . $this->baseDirectory . '/../Web/Templates');
+        exec('rm -rf ' . $this->baseDirectory . '/Web/');
+        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Resources');
+        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Templates');
     }
 
     protected function getControllerAndActions()
     {
-        $templateDirectory = $this->baseDirectory . '/../Resources/Private/Templates';
-        $templateDataDirectory = $this->baseDirectory . '/../Resources/Private/TemplatesExampleData';
+        $templateDirectory = $this->baseDirectory . '/Resources/Private/Templates';
+        $templateDataDirectory = $this->baseDirectory . '/Resources/Private/TemplatesExampleData';
         $controllersAndActions = [];
         $finder = new Finder();
         /** @var FilenameFilterIterator $templateFiles */
@@ -169,7 +176,7 @@ class RenderService
     {
         $this->output->writeln('<info>Rendering:</info>');
         foreach ($controllerActions as $controllerAndAction) {
-            $outputFileName = $this->baseDirectory . '/../Web/' . $controllerAndAction['output']['outputFileName'];
+            $outputFileName = $this->baseDirectory . '/Web/' . $controllerAndAction['output']['outputFileName'];
             $view = $this->viewService->getView(
                 $controllerAndAction['controller'],
                 $controllerAndAction['input']['data']
@@ -194,18 +201,19 @@ class RenderService
     protected function renderIndex($templates, $partials = [])
     {
         $view = $this->viewService->getViewFromFile(
-            __DIR__ . '/../../Resources/Private/Templates/Overview/Index.html',
+            LIQUEFY_DIRECTORY . '/Resources/Private/Templates/Overview/Index.html',
             [
-                'templates' => $templates,
-                'partials' => $partials
+                LIQUEFY_DIRECTORY . '/Resources/Private/Partials'
             ],
             [
-                __DIR__ . '/../../Resources/Private/Partials'
+                'templates' => $templates,
+                'partials' => $partials,
+                'settings' => $this->configurationService->getConfiguration()
             ]
         );
 
         file_put_contents(
-            $this->baseDirectory . '/../Web/index.html',
+            $this->baseDirectory . '/Web/index.html',
             $view->render()
         );
     }

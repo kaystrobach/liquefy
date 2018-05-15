@@ -1,5 +1,7 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Liquefy</a>
+    <a class="navbar-brand" href="{settings.layout.brand.link}">
+        {settings.layout.brand.name}
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -27,9 +29,21 @@
                         Partials
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
+                        <f:groupedFor each="{partials}" as="groupedByController" groupBy="controller" groupKey="controller">
                             <a class="dropdown-item" href="#partial-{controller}">{controller}</a>
                         </f:groupedFor>
+                    </div>
+                </li>
+            </f:if>
+            <f:if condition="{settings.additionalLinks}">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-externalResources" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        External Resources
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <f:for each="{settings.additionalLinks}" as="link">
+                            <a class="dropdown-item" href="{link.uri}">{link.name}</a>
+                        </f:for>
                     </div>
                 </li>
             </f:if>

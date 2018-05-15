@@ -14,27 +14,31 @@ class ResourceService
      */
     public function publishResources($directory)
     {
+        $source = $directory . '/Resources/Public';
+        $dest = $directory . '/Web/Resources';
         if ((bool)getenv('SYMLINK')) {
-            return $this->symlinkResources($directory);
+            return $this->symlinkResources($source, $dest);
         }
-        return $this->copyResources($directory);
+        return $this->copyResources($source, $dest);
     }
 
     /**
-     * @param $directory
+     * @param $source
+     * @param $dest
      * @return string
      */
-    protected function symlinkResources($directory)
+    protected function symlinkResources($source, $dest)
     {
-        return exec ('ln -s ' . $directory . '/../Resources/Public ' .  $directory . '/../Web/Resources');
+        return exec ('ln -s ' . $source . ' ' .  $dest);
     }
 
     /**
-     * @param $directory
+     * @param $source
+     * @param $dest
      * @return string
      */
-    protected function copyResources($directory)
+    protected function copyResources($source, $dest)
     {
-        return exec ('cp -R ' . $directory . '/../Resources/Public ' .  $directory . '/../Web/Resources');
+        return exec ('cp -R ' . $source . ' ' .  $dest);
     }
 }

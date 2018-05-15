@@ -41,3 +41,27 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $('#previewModal').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget) // Button that triggered the modal
+        let uri = button.data('uri');
+        let modal = $(this)
+        let template = modal.find('.template')
+
+        //modal.find('.modal-title').text(uri);
+        console.log(modal.find('.modal-body'));
+        modal.find('.modal-body').find('*').remove();
+
+        $.each(
+            button.data('uris'),
+            function( key, value ) {
+                let clon = template.clone();
+                clon.find('h2').text(value.input.dataFileName)
+                clon.removeClass('d-none');
+                clon.find('iframe').attr('src', value.output.outputFileName);
+                modal.find('.modal-body').append(clon);
+            }
+        );
+    });
+</script>

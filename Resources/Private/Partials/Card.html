@@ -6,7 +6,7 @@
         <f:comment>Fix problem with popping the first entry here to get a valid preview</f:comment>
         <f:for each="{groupedFiles}" as="file" iteration="iteration">
             <f:if condition="{iteration.isFirst}">
-                <iframe src="{file.output.outputFileName}"></iframe>
+                <iframe data-src="{file.output.outputFileName}"></iframe>
             </f:if>
         </f:for>
     </div>

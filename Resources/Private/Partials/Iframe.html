@@ -1,0 +1,8 @@
+<f:if condition="{settings.layout.lazyload}">
+    <f:then>
+        <iframe data-src="{url}"></iframe>
+    </f:then>
+    <f:else>
+        <iframe src="{url}"></iframe>
+    </f:else>
+</f:if>
