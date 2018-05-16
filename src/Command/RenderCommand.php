@@ -76,7 +76,7 @@ class RenderCommand extends Command
         $tracker = new \JasonLewis\ResourceWatcher\Tracker;
         $watcher = new \JasonLewis\ResourceWatcher\Watcher($tracker, $files);
 
-        $watchDirectory = BASE_DIRECTORY . '/../Resources/';
+        $watchDirectory = BASE_DIRECTORY . '/Resources/';
         $listener = $watcher->watch($watchDirectory);
 
         $output->writeln('<info>Now watching</info>:');
