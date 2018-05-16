@@ -19,6 +19,51 @@ tracker:
       params:
         "issue[title]": "Problem with %templatefile% and %datafile"
         "issue[description]": "Please provide as much information as possible"
+
+devices:
+  vanilla-desktop-fhd:
+    name: "full hd"
+    enable: true
+    width:  1980
+    height: 1080
+    scale:  0.18
+  vanilla-desktop-hd-ready:
+    name: "hd ready"
+    enable: true
+    width:  1280
+    height:  720
+    scale:  0.28
+  apple-iphone-6s:
+    name: "iPhone 6s"
+    enable: true
+    width:   365
+    height:  667
+    scale:  0.33
+  apple-iphone-6s-plus:
+    name: "iPhone 6s"
+    enable: true
+    width:   414
+    height:  736
+    scale:  0.38
+  apple-iphone-se:
+    name: "iPhone SE"
+    enable: true
+    width:   320
+    height:  586
+    scale:  0.38
+  apple-ipad-air-1:
+    name: "iPad Air"
+    enable: true
+    width:  1024
+    height:  768
+    scale:  0.28
+  google-nexus-6:
+    name: "Nexus 6"
+    enable: true
+    width:   412
+    height:  732
+    scale:  0.38
+
 #-----------------------------------------------------------------------------------------------------------------------
 #hooks:
 #  preRender:

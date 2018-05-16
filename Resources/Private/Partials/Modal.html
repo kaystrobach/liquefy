@@ -10,25 +10,15 @@
 
             <div class="d-none template">
                 <h2></h2>
-                <div class="card-group">
-                    <div class="card">
-                        <div class="card-header">Desktop</div>
-                        <div class="iframe-zoomed-wrap iframe-zoomed-desktop">
-                            <iframe src=""></iframe>
+                <div class="card-columns">
+                    <f:for each="{settings.devices}" as="device" key="selector">
+                        <div class="card">
+                            <div class="card-header">{device.name}</div>
+                            <div class="iframe-zoomed-wrap device-{selector}">
+                                <iframe src=""></iframe>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">iPhone 6s</div>
-                        <div class="iframe-zoomed-wrap iframe-zoomed-iphone-6s">
-                            <iframe src=""></iframe>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">iPad Air</div>
-                        <div class="iframe-zoomed-wrap iframe-zoomed-ipad-air">
-                            <iframe src=""></iframe>
-                        </div>
-                    </div>
+                    </f:for>
                 </div>
             </div>
 
