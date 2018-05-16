@@ -13,6 +13,11 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+        <f:if condition="{settings.layout.logo.file}">
+            <link rel="shortcut icon" href="{settings.layout.logo.file}">
+        </f:if>
+
+
         <f:render partial="Head/LazyLoad" arguments="{_all}" />
 
         <style type="text/css">
@@ -117,6 +122,23 @@
                 }
             }
 
+        </style>
+
+        <style type="text/css">
+            <f:for each="{settings.devices}" as="device" key="selector">
+               .device-{selector} <f:format.raw>{</f:format.raw>
+                    width: {device.scale * device.width}px
+               }
+               .device-{selector} iframe <f:format.raw>{</f:format.raw>
+                    width: {device.width}px;
+                    height: {device.height}px;
+                    -ms-transform: scale({device.scale});
+                    -moz-transform: scale({device.scale});
+                    -o-transform: scale({device.scale});
+                    -webkit-transform: scale({device.scale});
+                    transform: scale({device.scale});
+                }
+            </f:for>
         </style>
     </head>
     <body class="bg-light">
