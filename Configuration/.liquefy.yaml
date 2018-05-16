@@ -17,8 +17,16 @@ tracker:
     link:
       url: "https://gitlab.com"
       params:
-        "issue[title]": "Problem with %templatefile% and %datafile"
+        "issue[title]": "Problem with %controller% and %action%"
         "issue[description]": "Please provide as much information as possible"
+  github:
+    name: "Github"
+    enable: false
+    link:
+      url: "https://github.com/vendor/project/issues/new"
+      params:
+        "title": "Problem with %controller% and %action%"
+        "body": "Please provide as much information as possible"
 
 devices:
   vanilla-desktop-fhd:
