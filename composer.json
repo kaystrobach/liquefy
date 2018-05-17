@@ -5,7 +5,7 @@
     "liquefy"
   ],
   "require": {
-    "typo3fluid/fluid": "^2.4",
+    "typo3fluid/fluid": "^2.1||^2.4",
     "symfony/finder": "^3.4",
     "symfony/console": "^3.4",
     "symfony/process": "^3.4",
