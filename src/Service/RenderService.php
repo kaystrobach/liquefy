@@ -45,16 +45,21 @@ class RenderService
      */
     protected $configurationService;
 
+    public function __construct()
+    {
+        $this->viewService = new ViewService();
+        $this->resourceService = new ResourceService();
+        $this->configurationService = new ConfigurationService();
+        $this->configurationService->applySpecialConfiguration(LIQUEFY_CWD . '/.liquefy.yaml');
+        $this->baseDirectory = $this->configurationService->getByPath('configuration.paths.rootPath');
+    }
+
     /**
      * @param string $baseDirectory
      */
     public function setBaseDirectory($baseDirectory)
     {
         $this->baseDirectory = $baseDirectory;
-        $this->viewService = new ViewService();
-        $this->resourceService = new ResourceService();
-        $this->configurationService = new ConfigurationService();
-        $this->configurationService->applySpecialConfiguration(LIQUEFY_CWD . '/.liquefy.yaml');
     }
 
     public function render(InputInterface $input, OutputInterface $output)
@@ -78,8 +83,11 @@ class RenderService
 
     protected function getControllerAndActions()
     {
-        $templateDirectory = $this->baseDirectory . '/Resources/Private/Templates';
-        $templateDataDirectory = $this->baseDirectory . '/Resources/Private/TemplatesExampleData';
+        $templateDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
+            . $this->configurationService->getByPath('configuration.paths.templatesRootPaths.default');
+        $templateDataDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
+            . $this->configurationService->getByPath('configuration.paths.templatesDataRootPaths.default');
+
         $controllersAndActions = [];
         $finder = new Finder();
         /** @var FilenameFilterIterator $templateFiles */
@@ -92,14 +100,14 @@ class RenderService
 
             $data = $this->getProvidedData($templateDataDirectory, $controller, $action);
 
-            foreach($data as $dataFileName => $data) {
+            foreach($data as $dataFileName => $dataFileContent) {
                 $controllersAndActions[] = [
                     'controller' => $controller,
                     'action' => $action,
                     'controllerAction' => $controller . ' / ' . $action,
                     'input' => [
                         'dataFileName' => $dataFileName,
-                        'data' => $data
+                        'data' => $dataFileContent
                     ],
                     'output' => [
                         'outputFileName' => 'Templates/' . $controller . '.' . $action . '.' . $dataFileName . '.html'
@@ -125,6 +133,54 @@ class RenderService
         );
 
         return $controllersAndActions;
+    }
+
+    protected function getPartials()
+    {
+        $templateDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
+            . $this->configurationService->getByPath('configuration.paths.partialsRootPaths.default');
+        $templateDataDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
+            . $this->configurationService->getByPath('configuration.paths.partialsDataRootPaths.default');
+        $partials = [];
+
+        $finder = new Finder();
+        /** @var FilenameFilterIterator $templateFiles */
+        $templateFiles = $finder->files()->in($templateDirectory)->name('*.html')->sortByName();
+
+        /** @var \SplFileInfo $file */
+        foreach($templateFiles as $file) {
+            $partial = $file->getBasename('.html');
+            $data = $this->getProvidedData($templateDataDirectory, $partial, null);
+
+            foreach($data as $dataFileName => $dataFileContent) {
+                $partials[] = [
+                    'partial' => $partial,
+                    'input' => [
+                        'dataFileName' => $dataFileName,
+                        'data' => $dataFileContent
+                    ],
+                    'code' => file_get_contents($file->getRealPath()),
+                    'output' => [
+                        'outputFileName' => 'Partials/' . $partial . '.' . $dataFileName . '.html'
+                    ]
+                ];
+            }
+        }
+
+        usort(
+            $partials,
+            function($a, $b) {
+                if ($a['controller'] === $b['controller']) {
+                    return 1;
+                }
+                if ($a['controller'] < $b['controller']) {
+                    return -1;
+                }
+                return 1;
+            }
+        );
+
+        return $partials;
     }
 
     /**
@@ -184,6 +240,23 @@ class RenderService
             file_put_contents(
                 $outputFileName,
                 $view->render($controllerAndAction['action'])
+            );
+            $this->output->writeln(' ... ' . realpath($outputFileName));
+        }
+    }
+
+    protected function renderPartials($partials)
+    {
+        $this->output->writeln('<info>Rendering:</info>');
+        foreach ($partials as $partial) {
+            $outputFileName = $this->baseDirectory . '/Web/' . $partial['output']['outputFileName'];
+            $view = $this->viewService->getView(
+                $partial['partial'],
+                $partial['input']['data']
+            );
+            file_put_contents(
+                $outputFileName,
+                $view->renderPartial($partial['partial'], null, $partial['input']['data'])
             );
             $this->output->writeln(' ... ' . realpath($outputFileName));
         }

@@ -1,11 +1,23 @@
 #-----------------------------------------------------------------------------------------------------------------------
+configuration:
+  paths:
+    rootPath: !php/const LIQUEFY_CWD
+    layoutsRootPaths:
+      default: Resources/Private/Layouts
+    templatesRootPaths:
+      default: Resources/Private/Templates
+    templatesDataRootPaths:
+      default: Resources/Private/TemplatesExampleData
+    partialsRootPaths:
+      default: Resources/Private/Partials
+    partialsDataRootPaths:
+      default: Resources/Private/PartialsExampleData
 layout:
   brand:
     name: "liquefy by 4viewture"
     link: "https://4viewture.eu"
   logo:
     name: ""
-    link: ""
     file: ""
   lazyload: true
   livereload: true

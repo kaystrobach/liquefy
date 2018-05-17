@@ -25,7 +25,10 @@ class ConfigurationService
 
     public function readDefaultConfiguration()
     {
-        $this->defaultConfiguration = Yaml::parseFile(LIQUEFY_DIRECTORY . '/Configuration/.liquefy.yaml');
+        $this->defaultConfiguration = Yaml::parseFile(
+            LIQUEFY_DIRECTORY . '/Configuration/.liquefy.yaml',
+            Yaml::PARSE_CONSTANT
+        );
     }
 
     public function applySpecialConfiguration($additionalFile = null)
@@ -40,7 +43,10 @@ class ConfigurationService
         if (is_readable($file)) {
             $this->configuration = array_replace_recursive(
                 $this->configuration,
-                Yaml::parseFile($file)
+                Yaml::parseFile(
+                    $file,
+                    Yaml::PARSE_CONSTANT
+                )
             );
         }
     }
@@ -48,5 +54,28 @@ class ConfigurationService
     public function getConfiguration()
     {
         return $this->configuration;
+    }
+
+    public function getByPath($path)
+    {
+        $pathSegments = explode('.', $path);
+        return $this->getByPathRecursive(
+            $pathSegments,
+            $this->configuration
+        );
+    }
+
+    protected function getByPathRecursive($pathSegments, $array)
+    {
+        if (count($pathSegments) === 0) {
+            return $array;
+        }
+
+        $nextKey = array_shift ($pathSegments);
+        if (array_key_exists($nextKey, $array)) {
+            return $this->getByPathRecursive($pathSegments, $array[$nextKey]);
+        }
+
+        return null;
     }
 }

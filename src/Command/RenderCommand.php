@@ -54,7 +54,9 @@ class RenderCommand extends Command
         $this->output = $output;
 
         $renderService = new RenderService();
-        $renderService->setBaseDirectory(BASE_DIRECTORY);
+
+        // @todo add option to overwrite base dir lateron
+        //$renderService->setBaseDirectory(BASE_DIRECTORY);
 
         $this->executeOneTime($renderService, $input, $output);
 
