@@ -6,9 +6,9 @@
   ],
   "require": {
     "typo3fluid/fluid": "^2.1||^2.4",
-    "symfony/finder": "^3.4",
-    "symfony/console": "^3.4",
-    "symfony/process": "^3.4",
+    "symfony/finder": "^3.3||^3.4",
+    "symfony/console": "^3.3||^3.4",
+    "symfony/process": "^3.3||^3.4",
     "jasonlewis/resource-watcher": "1.2.*",
     "symfony/yaml": "^3.4"
   },
