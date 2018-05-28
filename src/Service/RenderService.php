@@ -284,7 +284,7 @@ class RenderService
             [
                 'templates' => $templates,
                 'partials' => $partials,
-                'settings' => $this->options
+                'settings' => $this->options['globalSettings']
             ]
         );
 

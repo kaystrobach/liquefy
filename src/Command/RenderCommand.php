@@ -72,6 +72,7 @@ class RenderCommand extends Command
                     'partialsDataRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.partialDataRootPaths'),
                     'templateRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.templateRootPaths'),
                     'templateDataRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.templateDataRootPaths'),
+                    'globalSettings' => $this->configurationService->getConfiguration(),
                 ]
             );
             $this->executeOneTime($renderService, $input, $output);
