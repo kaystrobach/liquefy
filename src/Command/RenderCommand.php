@@ -1,8 +1,8 @@
 <?php
 namespace KayStrobach\Liquefy\Command;
 
+use KayStrobach\Liquefy\Service\ConfigurationService;
 use KayStrobach\Liquefy\Service\RenderService;
-use KayStrobach\Liquefy\Service\ViewService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,6 +14,11 @@ class RenderCommand extends Command
      * @var OutputInterface
      */
     private $output;
+
+    /**
+     * @var ConfigurationService
+     */
+    protected $configurationService;
 
     /**
      * RenderCommand constructor.
@@ -53,12 +58,24 @@ class RenderCommand extends Command
     {
         $this->output = $output;
 
-        $renderService = new RenderService();
+        $this->configurationService = new ConfigurationService();
+        $this->configurationService->applySpecialConfiguration(LIQUEFY_CWD . '/.liquefy.yaml');
 
-        // @todo add option to overwrite base dir lateron
-        //$renderService->setBaseDirectory(BASE_DIRECTORY);
-
-        $this->executeOneTime($renderService, $input, $output);
+        $jobs = $this->configurationService->getByPath('configuration.jobs');
+        foreach($jobs as $key => $job) {
+            $renderService = new RenderService(
+                [
+                    'name' => 'default',
+                    'baseDirectory' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.rootPath'),
+                    'layoutRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.layoutRootPaths'),
+                    'partialRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.partialRootPaths'),
+                    'partialsDataRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.partialDataRootPaths'),
+                    'templateRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.templateRootPaths'),
+                    'templateDataRootPaths' => $this->configurationService->getByPath('configuration.jobs.' . $key . '.paths.templateDataRootPaths'),
+                ]
+            );
+            $this->executeOneTime($renderService, $input, $output);
+        }
 
         if ($input->getOption('watch')) {
             $this->watchForChangesAndExecute($renderService, $input, $output);

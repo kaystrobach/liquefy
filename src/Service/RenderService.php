@@ -41,17 +41,20 @@ class RenderService
     protected $output;
 
     /**
-     * @var ConfigurationService
+     * @var array
      */
-    protected $configurationService;
+    protected $options = [];
 
-    public function __construct()
+    /**
+     * RenderService constructor.
+     * @param array $options
+     */
+    public function __construct($options)
     {
         $this->viewService = new ViewService();
         $this->resourceService = new ResourceService();
-        $this->configurationService = new ConfigurationService();
-        $this->configurationService->applySpecialConfiguration(LIQUEFY_CWD . '/.liquefy.yaml');
-        $this->baseDirectory = $this->configurationService->getByPath('configuration.paths.rootPath');
+        $this->baseDirectory = $options['baseDirectory'];
+        $this->options = $options;
     }
 
     /**
@@ -84,9 +87,9 @@ class RenderService
     protected function getControllerAndActions()
     {
         $templateDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
-            . $this->configurationService->getByPath('configuration.paths.templatesRootPaths.default');
+            . $this->options['templateRootPaths']['default'];
         $templateDataDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
-            . $this->configurationService->getByPath('configuration.paths.templatesDataRootPaths.default');
+            . $this->options['templateDataRootPaths']['default'];
 
         $controllersAndActions = [];
         $finder = new Finder();
@@ -138,9 +141,9 @@ class RenderService
     protected function getPartials()
     {
         $templateDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
-            . $this->configurationService->getByPath('configuration.paths.partialsRootPaths.default');
+            . $this->options['templatesRootPaths']['partialsRootPaths']['default'];
         $templateDataDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
-            . $this->configurationService->getByPath('configuration.paths.partialsDataRootPaths.default');
+            . $this->options['templatesRootPaths']['partialsDataRootPaths']['default'];
         $partials = [];
 
         $finder = new Finder();
@@ -281,7 +284,7 @@ class RenderService
             [
                 'templates' => $templates,
                 'partials' => $partials,
-                'settings' => $this->configurationService->getConfiguration()
+                'settings' => $this->options
             ]
         );
 
