@@ -82,6 +82,7 @@ class RenderService
         exec('rm -rf ' . $this->baseDirectory . '/Web/');
         exec ('mkdir -p ' . $this->baseDirectory . '/Web/Resources');
         exec ('mkdir -p ' . $this->baseDirectory . '/Web/Templates');
+        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Pages');
     }
 
     protected function getControllerAndActions()
@@ -262,6 +263,26 @@ class RenderService
                 $view->renderPartial($partial['partial'], null, $partial['input']['data'])
             );
             $this->output->writeln(' ... ' . realpath($outputFileName));
+        }
+    }
+
+    protected function renderPages()
+    {
+        $pagesDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
+            . $this->options['pagesRootPaths']['default'];
+        $finder = new Finder();
+        /** @var FilenameFilterIterator $templateFiles */
+        $templateFiles = $finder->files()->in($pagesDirectory)->name('*.html')->sortByName();
+        /** @var \SplFileInfo $file */
+        foreach ($templateFiles as $file) {
+            $view = $this->viewService->getView(
+                $file->getRealPath(),
+                $this->options
+            );
+            file_put_contents(
+                $this->baseDirectory . '/Pages/',
+                $view->render()
+            );
         }
     }
 
