@@ -2,6 +2,7 @@
 
 namespace KayStrobach\Liquefy\Service;
 
+use KayStrobach\Liquefy\Core\ViewHelper\ViewHelperResolver;
 use TYPO3Fluid\Fluid\View\TemplateView;
 
 class ViewService
@@ -18,6 +19,10 @@ class ViewService
         );
         $paths->setPartialRootPaths(
             $partialRootPaths
+        );
+
+        $view->getRenderingContext()->setViewHelperResolver(
+            new ViewHelperResolver()
         );
 
         $view->getRenderingContext()->getViewHelperResolver()->addNamespace(

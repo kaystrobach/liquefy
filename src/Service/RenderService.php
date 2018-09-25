@@ -99,7 +99,7 @@ class RenderService
 
         /** @var \SplFileInfo $file */
         foreach($templateFiles as $file) {
-            $controller = basename($file->getPath());
+            $controller = substr($file->getPath(), strlen($templateDirectory)+1);
             $action  = $file->getBasename('.html');
 
             $data = $this->getProvidedData($templateDataDirectory, $controller, $action);
@@ -114,7 +114,7 @@ class RenderService
                         'data' => $dataFileContent
                     ],
                     'output' => [
-                        'outputFileName' => 'Templates/' . $controller . '.' . $action . '.' . $dataFileName . '.html'
+                        'outputFileName' => 'Templates/' . str_replace('/', '-', $controller) . '.' . $action . '.' . $dataFileName . '.html'
                     ]
                 ];
             }
