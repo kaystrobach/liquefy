@@ -6,11 +6,10 @@
 namespace KayStrobach\Liquefy\ViewHelpers;
 
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithContentArgumentAndRenderStatic;
 
-class FormViewHelper extends AbstractViewHelper
+class FormViewHelper extends AbstractTagBasedViewHelper
 {
     use CompileWithContentArgumentAndRenderStatic;
 
@@ -24,18 +23,27 @@ class FormViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     * Name of the tag to be created by this view helper
+     *
+     * @var string
+     * @api
+     */
+    protected $tagName = 'form';
+
+    /**
      * @return void
      */
     public function initializeArguments()
     {
         parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
         $this->registerArgument('action', 'string', '');
         $this->registerArgument('method', 'string', '');
-        $this->registerArgument('id', 'string', '');
     }
 
     public function render()
     {
-        return '<form>' . $this->renderChildren() . '</form>';
+        $this->tag->setContent($this->renderChildren());
+        return $this->tag->render();
     }
 }
