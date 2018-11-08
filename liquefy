@@ -16,6 +16,9 @@ $application->setCommandLoader(
             'render:all' => function () {
                 return new \KayStrobach\Liquefy\Command\RenderCommand('render:all');
             },
+            'datafile:create' => function () {
+                return new \KayStrobach\Liquefy\Command\DataFileCreateCommand('datafile:create');
+            },
         ]
     )
 );
