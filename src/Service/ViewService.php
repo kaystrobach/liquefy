@@ -57,11 +57,11 @@ class ViewService
         return $view;
     }
 
-    function getViewFromFile($templatePathAndFilename, $partialRootPaths = [], $variables = [])
+    function getViewFromFile($templatePathAndFilename, $layoutRootPaths = [], $partialRootPaths = [], $variables = [])
     {
         $view = $this->initializeView(
             [],
-            [],
+            $layoutRootPaths,
             $partialRootPaths
         );
         $view->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
@@ -69,5 +69,19 @@ class ViewService
             $view->assignMultiple($variables);
         }
         return $view;
+    }
+
+    function getViewFromFileInternal($templatePathAndFilename, $variables = [])
+    {
+        return $this->getViewFromFile(
+            $templatePathAndFilename,
+            [
+                LIQUEFY_DIRECTORY . '/Resources/Private/Layouts'
+            ],
+            [
+                LIQUEFY_DIRECTORY . '/Resources/Private/Partials'
+            ],
+            $variables
+        );
     }
 }
