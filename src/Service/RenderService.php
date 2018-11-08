@@ -241,11 +241,19 @@ class RenderService
                 $controllerAndAction['controller'],
                 $controllerAndAction['input']['data']
             );
-            file_put_contents(
-                $outputFileName,
-                $view->render($controllerAndAction['action'])
-            );
-            $this->output->writeln(' ... ' . realpath($outputFileName));
+            try {
+                file_put_contents(
+                    $outputFileName,
+                    $view->render($controllerAndAction['action'])
+                );
+                $this->output->writeln(' ... ' . realpath($outputFileName));
+            } catch (\Exception $e) {
+                file_put_contents(
+                    $outputFileName,
+                    '<h1>Exception: ' . $e->getMessage() . '</h1><pre>' . $e->getTraceAsString() .'</pre>'
+                );
+                $this->output->writeln(' <error>.F.</error> ' . realpath($outputFileName));
+            }
         }
     }
 
