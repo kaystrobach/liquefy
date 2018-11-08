@@ -1,179 +1,33 @@
-<html>
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<f:layout name="Default" />
 
-        <title>
-            {settings.layout.brand.name}
-        </title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<f:section name="Content">
+    <f:if condition="{templates}">
+        <div class="container">
+            <h1 class="display-1">Templates</h1>
+            <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
+                <div class="p-4" id="controller-{controller}"></div>
+                <h2 class="display-4">{controller}</h2>
+                <div class="card-columns">
+                    <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
+                        <f:render partial="Card" arguments="{_all}"/>
+                    </f:groupedFor>
+                </div>
+            </f:groupedFor>
+        </div>
+    </f:if>
 
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-        <f:if condition="{settings.layout.logo.file}">
-            <link rel="shortcut icon" href="{settings.layout.logo.file}">
-        </f:if>
-
-
-        <f:render partial="Head/LazyLoad" arguments="{_all}" />
-
-        <style type="text/css">
-            .phone {
-                border: 55px solid #ddd;
-                border-right-width: 7px;
-                border-left-width: 7px;
-                border-radius: 40px;
-                margin: 50px auto;
-                overflow: hidden;
-                transition: all 0.5s ease;
-            }
-            .iframe-zoomed-wrap {
-                width: 100%;
-                height: 230px;
-                padding: 0;
-                overflow: hidden;
-                background-color: #6c757d;
-                margin: auto;
-                max-width: 100%;
-            }
-            .iframe-zoomed-wrap iframe {
-                border: 0;
-                -ms-transform-origin: 0 0;
-                -moz-transform-origin: 0 0;
-                -o-transform-origin: 0 0;
-                -webkit-transform-origin: 0 0;
-                transform-origin: 0 0;
-            }
-
-            .iframe-zoomed-desktop {
-                width: 358px;
-            }
-            .iframe-zoomed-desktop iframe {
-                width: 1280px;
-                height: 780px;
-
-                -ms-transform: scale(0.28);
-                -moz-transform: scale(0.28);
-                -o-transform: scale(0.28);
-                -webkit-transform: scale(0.28);
-                transform: scale(0.28);
-            }
-
-            .iframe-zoomed-iphone-6s {
-                width: 120px;
-            }
-            .iframe-zoomed-iphone-6s iframe {
-                width: 365px;
-                height: 667px;
-
-                -ms-transform: scale(0.33);
-                -moz-transform: scale(0.33);
-                -o-transform: scale(0.33);
-                -webkit-transform: scale(0.33);
-                transform: scale(0.33);
-            }
-
-            .iframe-zoomed-iphone-se {
-                width: 121px;
-            }
-            .iframe-zoomed-iphone-se iframe {
-                width: 320px;
-                height: 568px;
-
-                -ms-transform: scale(0.38);
-                -moz-transform: scale(0.38);
-                -o-transform: scale(0.38);
-                -webkit-transform: scale(0.38);
-                transform: scale(0.38);
-            }
-
-            .iframe-zoomed-ipad-air {
-                width: 287px;
-            }
-            .iframe-zoomed-ipad-air iframe {
-                width: 1024px;
-                height: 768px;
-
-                -ms-transform: scale(0.28);
-                -moz-transform: scale(0.28);
-                -o-transform: scale(0.28);
-                -webkit-transform: scale(0.28);
-                transform: scale(0.28);
-            }
-
-            .modal-fullscreen {
-                max-width: 95%;
-            }
-
-            .card-columns {
-                -webkit-column-count: 1;
-                -moz-column-count: 1;
-                column-count: 1;
-            }
-
-            @media (min-width: 992px) {
-                .card-columns {
-                    -webkit-column-count: 2;
-                    -moz-column-count: 2;
-                    column-count: 2;
-                }
-            }
-
-        </style>
-
-        <style type="text/css">
-            <f:for each="{settings.devices}" as="device" key="selector">
-               .device-{selector} <f:format.raw>{</f:format.raw>
-                    width: {device.scale * device.width}px
-               }
-               .device-{selector} iframe <f:format.raw>{</f:format.raw>
-                    width: {device.width}px;
-                    height: {device.height}px;
-                    -ms-transform: scale({device.scale});
-                    -moz-transform: scale({device.scale});
-                    -o-transform: scale({device.scale});
-                    -webkit-transform: scale({device.scale});
-                    transform: scale({device.scale});
-                }
-            </f:for>
-        </style>
-    </head>
-    <body class="bg-light">
-        <f:render partial="NavBar" arguments="{_all}"/>
-
-        <f:if condition="{templates}">
-            <div class="container">
-                <h1 class="display-1">Templates</h1>
-                <f:groupedFor each="{templates}" as="groupedByController" groupBy="controller" groupKey="controller">
-                    <div class="p-4" id="controller-{controller}"></div>
-                    <h2 class="display-4">{controller}</h2>
-                    <div class="card-columns">
-                        <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
-                            <f:render partial="Card" arguments="{_all}"/>
-                        </f:groupedFor>
-                    </div>
-                </f:groupedFor>
-            </div>
-        </f:if>
-
-        <f:if condition="{partials}">
-            <div class="container">
-                <h1 class="display-1">Partials</h1>
-                <f:groupedFor each="{partials}" as="groupedByController" groupBy="controller" groupKey="controller">
-                    <div class="p-4" id="partial-{controller}"></div>
-                    <h2 class="display-4">{controller}</h2>
-                    <div class="card-columns">
-                        <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
-                            <f:render partial="Card" arguments="{_all}"/>
-                        </f:groupedFor>
-                    </div>
-                </f:groupedFor>
-            </div>
-        </f:if>
-
-        <f:render partial="Modal" />
-    </body>
-</html>
+    <f:if condition="{partials}">
+        <div class="container">
+            <h1 class="display-1">Partials</h1>
+            <f:groupedFor each="{partials}" as="groupedByController" groupBy="controller" groupKey="controller">
+                <div class="p-4" id="partial-{controller}"></div>
+                <h2 class="display-4">{controller}</h2>
+                <div class="card-columns">
+                    <f:groupedFor each="{groupedByController}" as="groupedFiles" groupBy="action" groupKey="action">
+                        <f:render partial="Card" arguments="{_all}"/>
+                    </f:groupedFor>
+                </div>
+            </f:groupedFor>
+        </div>
+    </f:if>
+</f:section>
