@@ -37,6 +37,7 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('package', 'string', '');
         $this->registerArgument('subpackage', 'string', '');
         $this->registerArgument('arguments', 'array', '');
+        $this->registerArgument('pageUid', 'int', '', false);
     }
 
     public function render()
