@@ -314,12 +314,14 @@ class RenderService
      */
     protected function renderIndex($templates, $partials = [])
     {
+        $now = new \DateTime('now');
         $view = $this->viewService->getViewFromFileInternal(
             LIQUEFY_DIRECTORY . '/Resources/Private/Templates/Overview/Index.html',
             [
                 'templates' => $templates,
                 'partials' => $partials,
-                'settings' => $this->options['globalSettings']
+                'settings' => $this->options['globalSettings'],
+                'now' => $now->format(\DateTime::RFC3339)
             ]
         );
 

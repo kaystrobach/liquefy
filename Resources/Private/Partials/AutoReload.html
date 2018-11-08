@@ -1,0 +1,31 @@
+<script type="text/javascript">
+    let lastModified = null;
+    function UrlExists(url)
+    {
+        var http = new XMLHttpRequest();
+        http.open('HEAD', url);
+        http.onload = function() {
+            let remoteLastModified = this.getResponseHeader("Last-Modified");
+            if (lastModified === null) {
+                lastModified = remoteLastModified;
+            }
+            if (lastModified !== remoteLastModified) {
+                window.setTimeout(
+                    function() {
+                        window.location.reload();
+                    },
+                    2500
+                );
+            }
+        };
+        http.send();
+    }
+
+    setInterval(
+        function() {
+            console.log('request');
+            UrlExists('index.html');
+        },
+        5000
+    );
+</script>
