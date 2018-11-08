@@ -73,6 +73,7 @@ class RenderService
 
         $this->cleanup();
         $this->renderTemplates($controllerActions);
+        //$this->renderPartials($this->getPartials());
         $this->renderIndex($controllerActions);
         $this->publishResources();
     }
@@ -82,6 +83,7 @@ class RenderService
         exec('rm -rf ' . $this->baseDirectory . '/Web/');
         exec ('mkdir -p ' . $this->baseDirectory . '/Web/Resources');
         exec ('mkdir -p ' . $this->baseDirectory . '/Web/Templates');
+        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Partials');
         exec ('mkdir -p ' . $this->baseDirectory . '/Web/Pages');
     }
 
@@ -174,10 +176,10 @@ class RenderService
         usort(
             $partials,
             function($a, $b) {
-                if ($a['controller'] === $b['controller']) {
+                if ($a['partial'] === $b['partial']) {
                     return 1;
                 }
-                if ($a['controller'] < $b['controller']) {
+                if ($a['partial'] < $b['partial']) {
                     return -1;
                 }
                 return 1;
@@ -266,18 +268,25 @@ class RenderService
                 $partial['partial'],
                 $partial['input']['data']
             );
-            file_put_contents(
-                $outputFileName,
-                $view->renderPartial($partial['partial'], null, $partial['input']['data'])
-            );
-            $this->output->writeln(' ... ' . realpath($outputFileName));
+            try {
+                file_put_contents(
+                    $outputFileName,
+                    $view->renderPartial($partial['partial'], null, $partial['input']['data'])
+                );
+                $this->output->writeln(' ... ' . realpath($outputFileName));
+            } catch (\Exception $e) {
+                file_put_contents(
+                    $outputFileName,
+                    '<h1>Exception: ' . $e->getMessage() . '</h1><pre>' . $e->getTraceAsString() .'</pre>'
+                );
+                $this->output->writeln(' <error>.F.</error> ' . realpath($outputFileName));
+            }
         }
     }
 
     protected function renderPages()
     {
-        $pagesDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR
-            . $this->options['pagesRootPaths']['default'];
+        $pagesDirectory = $this->baseDirectory . DIRECTORY_SEPARATOR  . $this->options['pagesRootPaths']['default'];
         $finder = new Finder();
         /** @var FilenameFilterIterator $templateFiles */
         $templateFiles = $finder->files()->in($pagesDirectory)->name('*.html')->sortByName();
@@ -305,11 +314,8 @@ class RenderService
      */
     protected function renderIndex($templates, $partials = [])
     {
-        $view = $this->viewService->getViewFromFile(
+        $view = $this->viewService->getViewFromFileInternal(
             LIQUEFY_DIRECTORY . '/Resources/Private/Templates/Overview/Index.html',
-            [
-                LIQUEFY_DIRECTORY . '/Resources/Private/Partials'
-            ],
             [
                 'templates' => $templates,
                 'partials' => $partials,

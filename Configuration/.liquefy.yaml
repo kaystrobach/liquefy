@@ -10,12 +10,14 @@ configuration:
           default: Resources/Private/Templates
         templateDataRootPaths:
           default: Resources/Private/TemplatesExampleData
-        partialRootPaths:
+        partialsRootPaths:
           default: Resources/Private/Partials
         partialDataRootPaths:
           default: Resources/Private/PartialsExampleData
-        partialDataRootPaths:
+        pagesRootPath:
           default: Resources/Private/Pages
+        pagesDataRootPaths:
+          default: Resources/Private/PagesExampleData
 
 layout:
   brand:
