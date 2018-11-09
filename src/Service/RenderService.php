@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 use Symfony\Component\Yaml\Yaml;
+use TYPO3\Flow\Utility\Files;
 
 class RenderService
 {
@@ -80,11 +81,11 @@ class RenderService
 
     protected function cleanup()
     {
-        exec('rm -rf ' . $this->baseDirectory . '/Web/');
-        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Resources');
-        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Templates');
-        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Partials');
-        exec ('mkdir -p ' . $this->baseDirectory . '/Web/Pages');
+        Files::removeDirectoryRecursively($this->baseDirectory . '/Web/');
+        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources');
+        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Templates');
+        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Partials');
+        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Pages');
     }
 
     protected function getControllerAndActions()
