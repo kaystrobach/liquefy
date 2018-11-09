@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 use Symfony\Component\Yaml\Yaml;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Utility\Files;
 
 class RenderService
 {
@@ -83,6 +83,7 @@ class RenderService
     {
         Files::removeDirectoryRecursively($this->baseDirectory . '/Web/');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources');
+        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources/Public');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Templates');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Partials');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Pages');
@@ -117,7 +118,7 @@ class RenderService
                         'data' => $dataFileContent
                     ],
                     'output' => [
-                        'outputFileName' => 'Templates/' . str_replace('/', '-', $controller) . '.' . $action . '.' . $dataFileName . '.html'
+                        'outputFileName' => 'Templates/' . str_replace('/', '-', Files::getUnixStylePath($controller)) . '.' . $action . '.' . $dataFileName . '.html'
                     ]
                 ];
             }
@@ -244,18 +245,19 @@ class RenderService
                 $controllerAndAction['controller'],
                 $controllerAndAction['input']['data']
             );
+            $this->output->write('    ' . $outputFileName);
             try {
                 file_put_contents(
                     $outputFileName,
                     $view->render($controllerAndAction['action'])
                 );
-                $this->output->writeln(' ... ' . realpath($outputFileName));
+                $this->output->writeln(' <info>[done]</info>');
             } catch (\Exception $e) {
                 file_put_contents(
                     $outputFileName,
                     '<h1>Exception: ' . $e->getMessage() . '</h1><pre>' . $e->getTraceAsString() .'</pre>'
                 );
-                $this->output->writeln(' <error>.F.</error> ' . realpath($outputFileName));
+                $this->output->writeln(' <error>[err]</error>');
             }
         }
     }
@@ -306,7 +308,10 @@ class RenderService
 
     protected function publishResources()
     {
+        $this->output->writeln('<info>Resources:</info>');
+        $this->output->write('    Publishing');
         $this->resourceService->publishResources($this->baseDirectory);
+        $this->output->writeln(' <info>[done]</info>');
     }
 
     /**
@@ -315,6 +320,7 @@ class RenderService
      */
     protected function renderIndex($templates, $partials = [])
     {
+        $this->output->writeln('<info>Rendering Standard Pages:</info>');
         $now = new \DateTime('now');
         $view = $this->viewService->getViewFromFileInternal(
             LIQUEFY_DIRECTORY . '/Resources/Private/Templates/Overview/Index.html',
@@ -330,5 +336,6 @@ class RenderService
             $this->baseDirectory . '/Web/index.html',
             $view->render()
         );
+        $this->output->writeln('    index.html <info>[done]</info>');
     }
 }

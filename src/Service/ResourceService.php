@@ -1,6 +1,7 @@
 <?php
 namespace KayStrobach\Liquefy\Service;
 
+use Neos\Flow\Utility\Files;
 
 class ResourceService
 {
@@ -25,7 +26,10 @@ class ResourceService
      */
     protected function symlinkResources($source, $dest)
     {
-        return exec ('ln -s ' . $source . ' ' .  $dest);
+        return Files::createRelativeSymlink(
+            $source,
+            $dest
+        );
     }
 
     /**
@@ -35,6 +39,9 @@ class ResourceService
      */
     protected function copyResources($source, $dest)
     {
-        return exec ('cp -R ' . $source . ' ' .  $dest);
+        Files::copyDirectoryRecursively(
+            Files::getNormalizedPath($source),
+            Files::getNormalizedPath($dest)
+        );
     }
 }

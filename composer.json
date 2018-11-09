@@ -11,7 +11,7 @@
     "symfony/process": "^3.3||^3.4",
     "jasonlewis/resource-watcher": "1.2.*",
     "symfony/yaml": "^3.4",
-    "neos/utility-files": "~3.3.0"
+    "neos/utility-files": "~4.3.0"
   },
   "license": "MIT",
   "authors": [
