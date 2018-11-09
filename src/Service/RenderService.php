@@ -81,7 +81,9 @@ class RenderService
 
     protected function cleanup()
     {
-        Files::removeDirectoryRecursively($this->baseDirectory . '/Web/');
+        if (is_dir($this->baseDirectory . '/Web/') || is_link($this->baseDirectory . '/Web/')) {        
+            Files::removeDirectoryRecursively($this->baseDirectory . '/Web/');
+        }
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources/Public');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Templates');
