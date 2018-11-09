@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 use Symfony\Component\Yaml\Yaml;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 class RenderService
 {
