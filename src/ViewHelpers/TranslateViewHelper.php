@@ -1,7 +1,5 @@
 <?php
 
-<?php
-
 namespace KayStrobach\Liquefy\ViewHelpers;
 
 /**
