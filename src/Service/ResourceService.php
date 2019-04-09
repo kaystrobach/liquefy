@@ -13,7 +13,7 @@ class ResourceService
     public function publishResources($directory)
     {
         $source = $directory . '/Resources/Public/';
-        $dest = $directory . '/Web/Resources/Public/';
+        $dest = $directory . '/Web/Resources/Public';
         if ((bool)getenv('SYMLINK')) {
             return $this->symlinkResources($source, $dest);
         }
