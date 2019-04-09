@@ -85,7 +85,7 @@ class RenderService
             Files::removeDirectoryRecursively($this->baseDirectory . '/Web/');
         }
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources');
-        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources/Public');
+        Files::createDirectoryRecursively($this->baseDirectory . '/Web/Resources');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Templates');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Partials');
         Files::createDirectoryRecursively($this->baseDirectory . '/Web/Pages');
