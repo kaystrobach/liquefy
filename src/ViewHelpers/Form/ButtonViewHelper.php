@@ -39,9 +39,6 @@ class ButtonViewHelper extends AbstractFormFieldViewHelper
     public function render($type = 'submit')
     {
         $name = $this->getName();
-        $this->registerFieldNameForFormTokenGeneration($name);
-        $this->addAdditionalIdentityPropertiesIfNeeded();
-
         $this->tag->addAttribute('type', $type);
         $this->tag->addAttribute('name', $name);
         $this->tag->addAttribute('value', $this->getValueAttribute(true));
