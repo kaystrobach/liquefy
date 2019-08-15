@@ -24,4 +24,17 @@ class AbstractFormFieldViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('value', 'mixed', 'Value of input tag');
         $this->registerArgument('property', 'string', 'Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.');
     }
+    
+    /**
+     * Get the name of this form element.
+     * Either returns arguments['name'], or the correct name for Object Access.
+     *
+     * In case property is something like bla.blubb (hierarchical), then [bla][blubb] is generated.
+     *
+     * @return string Name
+     */
+    protected function getName()
+    {
+        return $this->arguments['name'];
+    }
 }
