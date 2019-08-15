@@ -44,7 +44,6 @@ class FormViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('onsubmit', 'string', 'JavaScript: On submit of the form');
         $this->registerArgument('arguments', 'array', '');
         $this->registerArgument('action', 'string', '');
-        $this->registerArgument('method', 'string', '');
         $this->registerArgument('object', 'string', '');
         $this->registerArgument('objectName', 'string', '');
         $this->registerArgument('controller', 'string', '');
